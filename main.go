@@ -129,8 +129,6 @@ func main() {
 
 	args := flag.Args()
 
-	// check for flag-like arguments after positional args
-	// (Go's flag package stops parsing at the first non-flag argument)
 	for _, arg := range args {
 		if strings.HasPrefix(arg, "-") {
 			fmt.Printf("%sError: Flag %q must be placed before the path argument!%s\n", GHRed, arg, Reset)

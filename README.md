@@ -20,12 +20,23 @@ and a GitHub Dark inspired color palette with syntax highlighting for specific c
 - To run the utility, pass the path to the target directory as a command-line argument:
 
 ``` bash
-go run main.go <path_to_directory>
+go run main.go [flags] <path_to_directory>
 ```
+
+### Flags
+
+- `-a`, `--all`      Show hidden files (e.g. `.git`)
+- `-n`, `--no-color` Turn off color output
+- `-h`, `--help`     Show this help message
+- `-f`, `--flat`     Turn off spaces in output
+- `-w`, `--wide`     Use 4 spaces instead of 2
+
+**Note:** Flags `--flat` (`-f`) and `--wide` (`-w`) cannot be used together.
+
 - Example Command
 
 ``` bash
-go run main.go ./my-project
+go run main.go -a -w ./my-project
 ```
 - Example Output
 
