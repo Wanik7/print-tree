@@ -9,21 +9,38 @@ import (
 	"strings"
 )
 
-func printObj(name string, fileType bool, nest int) {
+// ANSI Пресеты GitHub Dark (TrueColor RGB)
+const (
+	Reset      = "\033[0m"
+	Bold       = "\033[1m"
+	GHDarkText = "\033[38;2;201;209;217m"
+	GHBlue     = "\033[38;2;88;166;255m"
+	GHGreen    = "\033[38;2;63;185;80m"
+	GHRed      = "\033[38;2;248;81;73m"
+	GHOrange   = "\033[38;2;240;138;93m"
+	GHPurple   = "\033[38;2;188;121;243m"
+)
+
+type treePrinter struct {
+	colors [5]string
+}
+
+func (tp *treePrinter) printObj(name string, isDir bool, nest int) {
+
+	values := map[bool]string{
+		true:  fmt.Sprintf("%sdir: ", Bold),
+		false: "file:",
+	}
 
 	const wide = 2
 
-	values := map[bool]string{
-		true:  "dir",
-		false: "file",
-	}
-
 	spaces := strings.Repeat(" ", nest*wide)
+	objColor := tp.colors[nest%len(tp.colors)]
 
-	fmt.Printf("%s%s: %s\n", spaces, values[fileType], name)
+	fmt.Printf("%s%s%s%s %s%s%s\n", spaces, GHDarkText, values[isDir], Reset, objColor, name, Reset)
 }
 
-func printTree(dest string, nest int) {
+func (tp *treePrinter) walkTree(dest string, nest int) {
 	files, err := os.ReadDir(dest)
 	if err != nil {
 		log.Fatal(err)
@@ -43,11 +60,11 @@ func printTree(dest string, nest int) {
 	for _, file := range files {
 		isDir := file.IsDir()
 
-		printObj(file.Name(), isDir, nest)
+		tp.printObj(file.Name(), isDir, nest)
 
 		if isDir {
 			nestDir := filepath.Join(dest, file.Name())
-			printTree(nestDir, nest+1)
+			tp.walkTree(nestDir, nest+1)
 		}
 	}
 
@@ -77,7 +94,11 @@ func main() {
 		os.Exit(1)
 	}
 
+	printer := treePrinter{
+		colors: [5]string{GHBlue, GHGreen, GHRed, GHPurple, GHOrange},
+	}
+
 	fmt.Printf("--- Tree of %s ---\n\n", path)
-	printTree(path, 0)
+	printer.walkTree(path, 0)
 
 }
